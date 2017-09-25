@@ -2,8 +2,26 @@
   "name": "scrape",
   "version": "0.0.0",
   "description": "Actual information about public procurements",
-  "main": "index.js",
+  "main": "app.js",
   "repository": "https://github.com/communar/scrape",
   "license": "MIT",
-  "author": "Alexey Sergienko <lexsergienko@gmail.com>"
+  "author": "Alexey Sergienko <lexsergienko@gmail.com>",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.15.4",
+    "express-handlebars": "^3.0.0",
+    "express-handlebars-sections": "^1.0.1",
+    "express-session": "^1.15.5",
+    "morgan": "^1.8.2",
+    "needle": "^2.0.0",
+    "nodemailer": "^4.1.0",
+    "request": "^2.81.0",
+    "tress": "^1.0.3",
+    "url": "^0.11.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.6.1",
+    "express-logger": "0.0.2"
+  }
 }
