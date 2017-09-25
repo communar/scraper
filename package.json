@@ -1,0 +1,9 @@
+{
+  "name": "scrape",
+  "version": "0.0.0",
+  "description": "Actual information about public procurements",
+  "main": "index.js",
+  "repository": "https://github.com/communar/scrape",
+  "license": "MIT",
+  "author": "Alexey Sergienko <lexsergienko@gmail.com>"
+}
