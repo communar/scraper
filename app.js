@@ -1,20 +1,40 @@
-const fs = require('fs')
+const credentials = require('./credentials.js')
 const express = require('express')
+const fs = require('fs')
 const handlebars = require('express-handlebars')
     .create({ defaultLayout: 'main' })
-const sections = require('express-handlebars-sections')
-const scraper = require('./rep/scraper.js')
-const credentials = require('./credentials.js')
 const message = require('./rep/message.js')(credentials)
+const morgan = require('morgan')
+const path = require('path')
+const rfs = require('rotating-file-stream');
+const scraper = require('./rep/scraper.js')
+const sections = require('express-handlebars-sections')
 
+const logDirectory = path.join(__dirname, 'log') // директория для логгов
 const app = express()
 
 // Подключение handlebars-представлений и handlebars-секций
 sections(handlebars)
 app.engine('handlebars', handlebars.engine)
 app.set('view engine', 'handlebars')
-// Настройка порта
-app.set('port', process.env.PORT || 2828)
+
+app.set('port', process.env.PORT || 2828) // настройка порта
+
+fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory) // директория для логгирования
+
+switch (app.get('env')) {
+    case 'development':
+        app.use(morgan('dev')) // многоцветное журналирование
+        break
+    case 'production':
+        app.use(morgan('combined', {
+            stream: rfs('requests.log', {
+                interval: '1d', // чередование файлов журналов
+                path: logDirectory
+            })
+        }))
+        break
+}
 
 // Работа с cookie
 app.use(require('cookie-parser')(credentials.cookieSecret))

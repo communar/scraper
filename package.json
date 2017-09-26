@@ -1,6 +1,6 @@
 {
   "name": "scrape",
-  "version": "0.0.0",
+  "version": "0.2.2",
   "description": "Actual information about public procurements",
   "main": "app.js",
   "repository": "https://github.com/communar/scrape",
@@ -17,11 +17,11 @@
     "needle": "^2.0.0",
     "nodemailer": "^4.1.0",
     "request": "^2.81.0",
+    "rotating-file-stream": "^1.3.2",
     "tress": "^1.0.3",
     "url": "^0.11.0"
   },
   "devDependencies": {
-    "eslint": "^4.6.1",
-    "express-logger": "0.0.2"
+    "eslint": "^4.6.1"
   }
 }

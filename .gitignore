@@ -7,5 +7,5 @@ out/
 dist/
 node_modules/
 coverage/
-db/data.json
+db/**
 credentials.js
