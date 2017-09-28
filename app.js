@@ -15,9 +15,9 @@ const session = require('express-session')
 const logDirectory = path.join(__dirname, 'log') // директория для логгов
 const app = express()
 
-// Cron-демон запускает срикпт раз в сутки
+// Cron-демон запускает скрипт в нулевую минуту в 12 часов каждые сутки 
 // Система взаимодействия всего функционала
-cron.schedule('0 * * * *', () => {
+cron.schedule('0 12 * * *', () => {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0 // Для сертификации
     scraper.start() // Запуск парсинга
     scraper.promiseSuccess
@@ -46,10 +46,10 @@ cron.schedule('0 * * * *', () => {
         .catch(err => console.error(`Ошибка загрузки файлов: ${err}`))
 })
 
-app.set('port', process.env.PORT || 2828) // настройка порта
+app.set('port', process.env.PORT || 8081) // настройка порта
 
 fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory) // директория для логгирования
-
+// Выбор журналирования в зависимости от среды разработки
 switch (app.get('env')) {
     case 'development':
         app.use(morgan('dev')) // многоцветное журналирование
@@ -69,7 +69,7 @@ sections(handlebars)
 app.engine('handlebars', handlebars.engine)
 app.set('view engine', 'handlebars')
 
-// Работа с cookie
+// Настройка cookie и сеансов
 app.use(require('cookie-parser')(credentials.cookieSecret))
 app.use(session({
     resave: false,
