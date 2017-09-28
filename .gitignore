@@ -3,6 +3,10 @@
 .DS_Store
 *.lock
 *.log
+*.todo
+*.todolist
+*.taskpaper
+*.tasks
 out/
 dist/
 node_modules/
