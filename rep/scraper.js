@@ -42,6 +42,7 @@ const scrap = (url, callback) => {
                 'url': url,
                 'author': $('.noticeTabBoxWrapper tbody').eq(1).children()[0].children[3].children[0].data,
                 'pay': $('.noticeTabBoxWrapper tbody').eq(3).children()[0].children[3].children[0].data,
+                'stage': $('.noticeTabBoxWrapper tbody').eq(0).children()[5].children[3].children[0].data,
                 'des': $('.noticeTabBoxWrapper tbody').eq(0).children()[4].children[3].children[0].data
             })
             callback()
