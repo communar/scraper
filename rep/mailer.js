@@ -21,7 +21,7 @@ module.exports = credentials => {
             mailTransoprt.sendMail({
                 from: from,
                 to: to,
-                subject: 'Результаты парсинга',
+                subject: 'Результаты',
                 html: body,
                 generateTextFromHtml: true
             }, err => {

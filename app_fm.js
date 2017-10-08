@@ -3,7 +3,7 @@ const child = new(forever.Monitor)('app.js', {
     max: 10,
     silent: true,
     minUptime: 5000,
-    spinSleepTime: 3600000,
+    spinSleepTime: 1800000,
     watch: false,
     options: []
 })
