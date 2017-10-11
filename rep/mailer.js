@@ -1,4 +1,15 @@
+const credentials = require('../db/credentials.js')
+const log = require('cllc')()
 const nodemailer = require('nodemailer')
+const Raven = require('raven')
+
+Raven.config(credentials.log.sentry).install()
+Raven.setContext({
+    user: {
+        email: credentials.log.email,
+        id: 'Mailer-script'
+    }
+})
 
 module.exports = credentials => {
 
@@ -12,26 +23,33 @@ module.exports = credentials => {
                 pass: credentials.gmail.password
             }
         }),
-        from = '"Parser-info" <lexsergienko@gmail.com>',
-        errorLogEmail = 'lexsergienko@gmail.com'
+        from = `"Scraper-app" <${credentials.log.email}>`,
+        errorLogEmail = credentials.log.email
 
     return {
         // Отправка письма адресату to
         send: (to, body) => {
-            mailTransoprt.sendMail({
-                from: from,
-                to: to,
-                subject: 'Результаты парсинга',
-                html: body,
-                generateTextFromHtml: true
-            }, err => {
-                if (err) {
-                    console.error(`Невозможно отправить письмо: ${err}`)
+            try {
+                mailTransoprt.sendMail({
+                    from: from,
+                    to: to,
+                    subject: 'Результаты',
+                    html: body,
+                    generateTextFromHtml: true
+                }, err => {
+                    if (err) {
+                        throw err
+                    }
+                })
+                log.finish('Информация передана')
+            } catch (err) {
+                    log.e(`Невозможно отправить письмо: ${err}`)
+                    Raven.captureException(err)
                 }
-            })
         },
         // Отправка письма адресанту в случае ошибки
         emailError: (message, filename, exception) => {
+            try {
             let body = `Message: <br><pre>${message}</pre><br>`
 
             if (exception) {
@@ -48,9 +66,13 @@ module.exports = credentials => {
                 generateTextFromHtml: true
             }, err => {
                 if (err) {
-                    console.error(`Невозможно отправить письмо: ${err}`)
+                        throw err
                 }
             })
+        } catch (err) {
+                log.e(`Невозможно отправить письмо об ошибке: ${err}`)
+                Raven.captureException(err)
+            }
         }
     }
 }
