@@ -1,10 +1,21 @@
 // Подключение модулей
-const urls = require('../db/credentials.js').urls
+const credentials = require('../db/credentials.js')
+const urls = credentials.urls
 const fs = require('fs')
+const log = require('cllc')()
 const resolve = require('url').resolve // Преобразование ссылки в абсолютную
 const needle = require('needle') // Получение html-страницы
 const tress = require('tress') // Рекурсивная функция для ссылок
+const Raven = require('raven')
 const cheerio = require('cheerio') // DOM-парсер с ядром jQuery
+
+Raven.config().install()
+Raven.setContext({
+    user: {
+        email: credentials.log.email,
+        id: 'Scraper-script'
+    }
+})
 
 // Функция для запуска парсинга извне модуля
 const start = () => {
@@ -12,7 +23,10 @@ const start = () => {
     if (results.length !== 0) {
         results.splice(0, results.length)
     }
+    log('Начало работы')
+    log.start('Проверено ссылок: %s. Добавлено аукционов: %s. Обработано аукционов: %s')
     urls.forEach(url => {
+        log.step(1, 0, 0)
         needle.get(url, (err, res) => {
             if (!err && res.statusCode === 200) {
                 let $ = cheerio.load(res.body)
@@ -22,11 +36,17 @@ const start = () => {
                     if ($('.tenderTd dt>strong').eq(i).text().replace(/\s+/g, ' ').trim() === 'Электронный аукцион') {
                         // Преобразование ссылки конкретного плана закупки
                         // и её добавление в очередь модуля tress
+                        log.step(0, 1, 0)
                         q.push(resolve(url, $('.descriptTenderTd dt>a').eq(i).attr('href')))
                     }
                 })
             } else {
-                throw err
+                try {
+                    throw err
+                } catch (err) {
+                    log.e(`Ошибка подключения к серверу: ${err}`)
+                    Raven.captureException(err)
+                }
             }
         })
     }) 
@@ -40,6 +60,7 @@ const scrap = (url, callback) => {
             let $ = cheerio.load(res.body)
 
             // Добавление нужной информации в массив
+            log.step(0, 0, 1)
             results.push({
                 'url': url,
                 'author': $('.noticeTabBoxWrapper tbody').eq(1).children()[0].children[3].children[0].data,
@@ -49,7 +70,7 @@ const scrap = (url, callback) => {
             })
             callback()
         } else {
-            console.error(err)
+            log.w(`Битый адрес... ${err}`)
         }
     })
 
@@ -58,7 +79,7 @@ const scrap = (url, callback) => {
 // Массив с результатами парсинга
 let results = []
 // Настройка функционирования асинхронной очереди по закупкам
-const q = tress(scrap, -5000)
+const q = tress(scrap, 2)
 const qPromise = new Promise((resolve, reject) => {
     // Сработает при последнем callback
     q.drain = () => {

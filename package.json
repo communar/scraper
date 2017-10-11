@@ -8,11 +8,12 @@
   "author": "Alexey Sergienko <lexsergienko@gmail.com>",
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
-    "cookie-parser": "^1.4.3",
+    "cllc": "^0.0.10",
     "forever-monitor": "^1.7.1",
     "needle": "^2.0.0",
     "node-cron": "^1.2.1",
     "nodemailer": "^4.1.0",
+    "raven": "^2.2.1",
     "request": "^2.81.0",
     "tress": "^1.0.3",
     "url": "^0.11.0"
