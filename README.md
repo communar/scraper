@@ -1,39 +1,33 @@
 # Scrape App
-***Desription:*** Actual information about public procurements with Express.js and Nodemailer  
-***Used Tools:*** Express, Nodemailer, Cron, forever, morgan
+***Desription:*** Actual information about public procurements to your email
 
 ## How to run
-First use 
+At first install all npm-packages.
+At second attitude a node-cron module in app.js file.
+At third run application:
 ```sh
-$ yarn init
+$ node app.js
 ```
-In the console call:
+or if you want to use forever-daemon (so far there is no need for this)
 ```sh
 $ node app_fm.js
 ```
-to run application by the forever-daemon or
-```sh
-$ node app.js
-``` 
-to create independent node-server
 
 ## Warning! 
 ### There are some necessary steps to app operation:
-1. Create file with passwords and cookie-secret named _credentials.js_
+1. Create file with all privacy information named _credentials.js_ in _./db/_ like this:
 ```js
 module.exports = {
-    cookieSecret: 'one two three four',
     gmail: {
         user: 'yourmail@gmail.com',
-        password: 'qwertyuiopas' // Gmail's app-password
-    }
+        password: 'qwertyuiopas' // Gmail app-password
+    },
+    customers: {
+        user1: usersemail@example, // Add more if you want more
+    },
+    log: {
+        email: 'yourmail@gmail.com',
+        sentry: '...' // I use Sentry+Raven, exactly you can use whatever you want (just removed all errors handling with Raven)
+    },
+    urls: ['first-url', 'second-url']
 }
-```
-2. It's good if you will create such repositories: _./db/_ and _./var/log/_
-
-### Todos
- - Colorizing new JSON scrape-result
- - Clustering server
- 
-#### Additional comments:
- - Try to use [PlainTask](https://github.com/aziz/PlainTasks) to manage development process
